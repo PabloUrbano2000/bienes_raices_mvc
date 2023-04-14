@@ -1,14 +1,15 @@
 import jwt from "jsonwebtoken";
 import { Usuario } from "../models/index.js";
 
-const protegerRuta = async (req, res, next) => {
-    // Verificar si hay un token
+const identificarUsuario = async (req, res, next) => {
+    // Identificar si hay un token
     const { _token } = req.cookies;
-
     if (!_token) {
-        return res.redirect("/auth/login");
+        req.usuario = null;
+        return next();
     }
-    // Comprobarel Token
+
+    // Comprobar un token
     try {
         const decoded = jwt.verify(_token, process.env.JWT_SECRET);
         const usuario = await Usuario.scope("eliminarPassword").findByPk(
@@ -18,8 +19,6 @@ const protegerRuta = async (req, res, next) => {
         // Almacenar el usuario al Req
         if (usuario) {
             req.usuario = usuario;
-        } else {
-            return res.redirect("/auth/login");
         }
 
         next();
@@ -29,4 +28,4 @@ const protegerRuta = async (req, res, next) => {
     }
 };
 
-export default protegerRuta;
+export default identificarUsuario;

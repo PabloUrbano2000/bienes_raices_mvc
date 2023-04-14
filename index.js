@@ -3,6 +3,8 @@ import csrf from "csurf";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/usuarioRoutes.js";
 import propiedadRoutes from "./routes/propiedadRoutes.js";
+import appRoutes from "./routes/appRoutes.js";
+import apiRoutes from "./routes/apiRoutes.js";
 import db from "./config/db.js";
 
 // Crear la app
@@ -19,13 +21,13 @@ app.use(csrf({ cookie: true }));
 
 // Conexión a la base de datos
 try {
-  // conexion a la bd
-  await db.authenticate();
-  // crea las tablas
-  db.sync();
-  console.log("Conexión correcta a la Base de Datos");
+    // conexion a la bd
+    await db.authenticate();
+    // crea las tablas
+    db.sync();
+    console.log("Conexión correcta a la Base de Datos");
 } catch (error) {
-  console.log(error);
+    console.log(error);
 }
 
 // Habilitar Pug
@@ -38,10 +40,12 @@ app.use(express.static("public"));
 // Routing
 app.use("/auth", userRoutes);
 app.use("/", propiedadRoutes);
+app.use("/", appRoutes);
+app.use("/api", apiRoutes);
 
 // Definir un puerto y arrancar el proyecto
 const PORT = 3000;
 
 app.listen(PORT, () => {
-  console.log("El servidor está en el puerto", PORT);
+    console.log("El servidor está en el puerto", PORT);
 });
